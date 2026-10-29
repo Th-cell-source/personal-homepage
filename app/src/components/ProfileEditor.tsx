@@ -5,7 +5,7 @@ interface ProfileEditorProps {
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
-  onLock: () => void;
+  onChangePassword: () => void;
 }
 
 const LABELS: Array<{ key: keyof ProfileState; label: string; placeholder: string; hint?: string }> = [
@@ -20,7 +20,7 @@ const LABELS: Array<{ key: keyof ProfileState; label: string; placeholder: strin
 ];
 
 /** 个人信息编辑弹窗：改完存到 localStorage，刷新页面仍然生效 */
-export function ProfileEditor({ open, onClose, onSaved, onLock }: ProfileEditorProps) {
+export function ProfileEditor({ open, onClose, onSaved, onChangePassword }: ProfileEditorProps) {
   const { profile, save, reset } = useProfile();
   const [draft, setDraft] = useState<ProfileState>(profile);
   const [error, setError] = useState("");
@@ -126,15 +126,8 @@ export function ProfileEditor({ open, onClose, onSaved, onLock }: ProfileEditorP
             <button type="button" className="btn btn--ghost" onClick={restore}>
               恢复默认
             </button>
-            <button
-              type="button"
-              className="btn btn--ghost"
-              onClick={() => {
-                onClose();
-                onLock();
-              }}
-            >
-              退出管理
+            <button type="button" className="btn btn--ghost" onClick={onChangePassword}>
+              修改登录口令
             </button>
           </div>
           <div className="modal__actions">

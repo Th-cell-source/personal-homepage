@@ -5,20 +5,10 @@ import { useProfile } from "../context/ProfileContext";
 interface NavProps {
   active: string;
   onEdit: () => void;
-  locked: boolean;
-  hasPasscode: boolean;
+  onLogout: () => void;
 }
 
-const LockIcon = () => (
-  <svg viewBox="0 0 16 16" aria-hidden="true" width="11" height="11">
-    <path
-      fill="currentColor"
-      d="M8 1a3 3 0 0 0-3 3v2H4.5A1.5 1.5 0 0 0 3 7.5v6A1.5 1.5 0 0 0 4.5 15h7A1.5 1.5 0 0 0 13 13.5v-6A1.5 1.5 0 0 0 11.5 6H11V4a3 3 0 0 0-3-3Zm1.5 5H6.5V4a1.5 1.5 0 1 1 3 0v2Z"
-    />
-  </svg>
-);
-
-export function Nav({ active, onEdit, locked, hasPasscode }: NavProps) {
+export function Nav({ active, onEdit, onLogout }: NavProps) {
   const [open, setOpen] = useState(false);
   const { profile, isCustom } = useProfile();
 
@@ -51,9 +41,10 @@ export function Nav({ active, onEdit, locked, hasPasscode }: NavProps) {
             onEdit();
           }}
         >
-          {locked ? <LockIcon /> : null}
-          {locked ? (hasPasscode ? "管理登录" : "设置口令") : "编辑资料"}
-          {isCustom ? " ·" : ""}
+          编辑资料{isCustom ? " ·" : ""}
+        </button>
+        <button className="nav__logout" type="button" onClick={onLogout}>
+          退出登录
         </button>
         <a className="nav__gh" href="https://github.com/Th-cell-source" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 16 16" aria-hidden="true">
