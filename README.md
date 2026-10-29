@@ -67,6 +67,7 @@ git add -A && git commit -m "..." && git push
 | 技能栈 | 后端、前端、AI 大模型、嵌入式四组标签 |
 | 项目作品 | 智语 Chat、电商图片下载助手、本站 |
 | 实训历程 | 10-20 ~ 10-28 七天时间线 |
+| 训练文件 | 训练链路、三阶段指标与损失曲线、8 个脚本源码在线查看 |
 | 联系 | GitHub / 主页 / 学校 / 专业 |
 
 ## 实现要点
@@ -75,6 +76,8 @@ git add -A && git commit -m "..." && git push
 - **自定义 Hook**：`useParticles`（Canvas 粒子，DPR ≤ 2、节点 ≤ 72、页面隐藏暂停、`prefers-reduced-motion` 降级）、`useScrollProgress`（顶部进度条）、`useSectionSpy`（导航高亮）。
 - **进场动画**：`Reveal` 组件用 `IntersectionObserver` 加 `.in`，`--d` 变量做错峰。
 - **可访问性**：语义标签、`aria-expanded`、`:focus-visible` 焦点环、`<noscript>` 兜底。
+- **个人信息编辑**：`ProfileContext` + `localStorage`，弹窗修改 8 个字段，保存即生效、刷新不丢，可一键恢复默认。
+- **训练文件**：`?raw` 动态导入 8 个训练脚本（按需加载、带行号查看），指标与损失曲线来自 `training/artifacts`。
 
 ## 文档
 

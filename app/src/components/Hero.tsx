@@ -1,18 +1,21 @@
-import { profile, stats } from "../data/profile";
+import { useProfile } from "../context/ProfileContext";
+import { stats } from "../data/profile";
 import { Reveal } from "./Reveal";
 
-const terminalLines: Array<{ cmd: string; flag?: string; out: string[] }> = [
-  { cmd: "whoami", out: ["田昊 / Tian Hao"] },
-  { cmd: "cat", flag: "edu.txt", out: ["大连民族大学 · 物联网工程 · 2024 级"] },
+const terminalLines: Array<{ cmd: string; flag?: string; out: (p: { major: string; grade: string; studentId: string; name: string }) => string[] }> = [
+  { cmd: "whoami", out: (p) => [`${p.name} / Tian Hao`] },
+  { cmd: "cat", flag: "edu.txt", out: (p) => [`大连民族大学 · ${p.major} · ${p.grade}`] },
   {
     cmd: "stack",
     flag: "--list",
-    out: ["Python · FastAPI · PyTorch", "React · TypeScript · Vue3", "C / 单片机 · Proteus · MySQL"],
+    out: () => ["Python · FastAPI · PyTorch", "React · TypeScript · Vue3", "C / 单片机 · Proteus · MySQL"],
   },
-  { cmd: "now", flag: "--working-on", out: ["智语 Chat：自建 175 万参数中文小模型"] },
+  { cmd: "now", flag: "--working-on", out: () => ["智语 Chat：自建 175 万参数中文小模型"] },
 ];
 
 export function Hero() {
+  const { profile } = useProfile();
+
   return (
     <section className="hero">
       <div className="wrap">
@@ -23,18 +26,20 @@ export function Hero() {
               AVAILABLE FOR INTERNSHIP · 2026
             </div>
             <h1>
-              {profile.heroTitleTop}
+              把想法做成
               <br />
-              <em>{profile.heroTitleBottom}</em>
-              {profile.heroTitleTail}
+              <em>能跑起来</em>
+              的东西
             </h1>
             <p className="hero__role">
               <b>{profile.name}</b> · {profile.major} · {profile.role}
             </p>
             <p className="hero__desc">
-              {profile.heroDescBefore}
-              <b>{profile.heroDescStrong}</b>
-              {profile.heroDescAfter}
+              {profile.school}
+              <b>
+                {profile.major} {profile.grade}
+              </b>
+              。平时写 Python、Java 和前端，也焊过板子、调过单片机；最近在做的事情是从零训练一个中文小模型，再把它接进一套能用的对话系统里。
             </p>
             <div className="hero__meta">
               <span>
@@ -51,7 +56,7 @@ export function Hero() {
               <a className="btn btn--primary" href="#projects">
                 看看我的项目 →
               </a>
-              <a className="btn btn--ghost" href={profile.github} target="_blank" rel="noopener noreferrer">
+              <a className="btn btn--ghost" href="https://github.com/Th-cell-source" target="_blank" rel="noopener noreferrer">
                 GitHub 主页
               </a>
             </div>
@@ -71,7 +76,7 @@ export function Hero() {
                     <span className="p">$</span> <span className="c">{line.cmd}</span>
                     {line.flag ? <span className="k"> {line.flag}</span> : null}
                   </div>
-                  {line.out.map((text) => (
+                  {line.out(profile).map((text) => (
                     <div key={text} className="m">
                       {text}
                     </div>

@@ -1,0 +1,13 @@
+{
+  "stage": "sft",
+  "epochs": 5,
+  "batch_size": 4,
+  "lr": 0.0008,
+  "train_samples": 112,
+  "val_samples": 12,
+  "steps": 140,
+  "best_val_loss": 0.4134,
+  "best_val_ppl": 1.51,
+  "elapsed_sec": 16.6,
+  "device": "cpu"
+}

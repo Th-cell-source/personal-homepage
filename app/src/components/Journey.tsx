@@ -6,7 +6,7 @@ export function Journey() {
     <section className="section" id="journey">
       <div className="wrap">
         <Reveal className="section__head" as="header">
-          <span className="section__idx">04</span>
+          <span className="section__idx">05</span>
           <h2 className="section__title">实训历程</h2>
           <span className="section__line" />
           <span className="section__note">10.20 — 10.28</span>

@@ -1,0 +1,15 @@
+{
+  "stage": "lora",
+  "r": 8,
+  "alpha": 16,
+  "epochs": 20,
+  "train_samples": 133,
+  "trainable_params": 73728,
+  "total_params": 1753536,
+  "trainable_ratio": 0.04205,
+  "final_train_loss": 0.1494,
+  "final_val_loss": 3.6108,
+  "adapter_kb": 288.0,
+  "elapsed_sec": 24.9,
+  "device": "cpu"
+}

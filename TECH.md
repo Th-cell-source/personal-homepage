@@ -37,7 +37,10 @@ personal-homepage/
 │       ├── hooks/
 │       │   ├── useParticles.ts     # Canvas 粒子
 │       │   └── useScrollFx.ts      # 进度条 + 区块高亮
-│       ├── data/profile.ts     # 唯一数据源
+│       ├── context/ProfileContext.tsx  # 可编辑的个人信息（localStorage）
+│       ├── data/profile.ts     # 默认数据
+│       ├── data/training.ts    # 训练脚本清单（?raw 懒加载）
+│       ├── data/training/*.py  # 训练源码副本（8 个脚本 + 4 个指标 JSON）
 │       └── styles/global.css   # 设计令牌 + 全部样式
 ├── scripts/copy-dist.mjs       # 构建产物 → 仓库根目录
 ├── index.html + assets/        # 发布产物（Pages 托管）
@@ -60,13 +63,16 @@ personal-homepage/
 | 减少动效 | `prefers-reduced-motion` 下只画静态一帧、关闭过渡 | 无障碍要求 |
 | 无 JS 兜底 | `app/index.html` 里 `<noscript>` 强制 `.reveal` 显示 | 内容不能因脚本失败而消失 |
 | 发布策略 | `npm run publish:pages` 把 `dist/` 拷到仓库根 | 复用现有 Pages（main / root）配置，不改仓库设置 |
+| 个人信息编辑 | `ProfileContext` + `localStorage`（key `tianhao:profile:v1`），`sanitize` 校验字段，默认值不落库 | 纯前端无后端也能"改完还在"；默认值与本地值一致时自动清除存储 |
+| 训练源码展示 | `import("./training/x.py?raw")` 动态导入，Vite 拆成独立 chunk；按行渲染带行号 | 源码约 1,100 行，不能进首屏包；点哪个加载哪个 |
+| 指标与曲线 | `metrics.json` 静态导入；损失曲线 PNG 由 Vite 处理进 `assets/` | 数字直接来自训练产物，避免手抄出错 |
 
 ## 5. 构建与性能
 
 | 指标 | 数值 |
 | --- | --- |
 | 构建命令 | `tsc --noEmit && vite build`（类型检查 + 打包） |
-| 产物 | `index.html` 1.1 KB、CSS 14.4 KB（gzip 3.9 KB）、JS 158.8 KB（gzip 52.8 KB） |
+| 产物 | `index.html` 0.9 KB、CSS 20.4 KB（gzip 5.0 KB）、主 JS 169.9 KB（gzip 57.4 KB）+ 8 个源码 chunk（2–10 KB） |
 | 构建耗时 | ≈1 s |
 | 首屏 | 无外部请求，单页应用首帧即渲染 |
 | 兼容 | Chrome/Edge 100+、Safari 15+；`clip-path`、`backdrop-filter`、`IntersectionObserver` 均在范围内 |

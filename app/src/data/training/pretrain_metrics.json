@@ -1,0 +1,16 @@
+{
+  "stage": "pretrain",
+  "steps": 600,
+  "batch_size": 8,
+  "block_size": 192,
+  "lr": 0.0025,
+  "vocab_size": 2000,
+  "num_params": 1753536,
+  "train_tokens": 7142,
+  "val_tokens": 634,
+  "best_val_loss": 12.232,
+  "best_val_ppl": 205257.47,
+  "final_train_loss": 0.1077,
+  "elapsed_sec": 277.9,
+  "device": "cpu"
+}
