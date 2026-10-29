@@ -36,7 +36,8 @@ personal-homepage/
 │       │   └── Reveal.tsx      # 进场动画包装组件
 │       ├── hooks/
 │       │   ├── useParticles.ts     # Canvas 粒子
-│       │   └── useScrollFx.ts      # 进度条 + 区块高亮
+│       │   ├── useScrollFx.ts      # 进度条 + 区块高亮
+│       │   └── useAdmin.ts         # 管理口令（PBKDF2 + sessionStorage）
 │       ├── context/ProfileContext.tsx  # 可编辑的个人信息（localStorage）
 │       ├── data/profile.ts     # 默认数据
 │       ├── data/training.ts    # 训练脚本清单（?raw 懒加载）
@@ -65,6 +66,7 @@ personal-homepage/
 | 发布策略 | `npm run publish:pages` 把 `dist/` 拷到仓库根 | 复用现有 Pages（main / root）配置，不改仓库设置 |
 | 个人信息编辑 | `ProfileContext` + `localStorage`（key `tianhao:profile:v1`），`sanitize` 校验字段，默认值不落库 | 纯前端无后端也能"改完还在"；默认值与本地值一致时自动清除存储 |
 | 训练源码展示 | `import("./training/x.py?raw")` 动态导入，Vite 拆成独立 chunk；按行渲染带行号 | 源码约 1,100 行，不能进首屏包；点哪个加载哪个 |
+| 管理口令 | `useAdmin` + Web Crypto：PBKDF2-SHA256、150,000 次迭代、16 字节随机盐，只存 `{salt, hash, iter}`；解锁状态放 sessionStorage；5 次失败锁 30 秒 | 静态站没有后端，用前端口令挡住"随手改"；同时明确它是防误改级别，不是服务端鉴权 |
 | 本地文件入口 | `localPaths.ts` 列 10 条真实路径；`buildLauncher()` 在浏览器里拼出 `.bat`（Blob 下载），含 `explorer` 与 `code` 调用 | 浏览器禁止 https→file:// 跳转，用"下载脚本 + 复制路径"绕开；页面检测 `location.protocol`，本地打开时额外显示"打开"按钮 |
 | 指标与曲线 | `metrics.json` 静态导入；损失曲线 PNG 由 Vite 处理进 `assets/` | 数字直接来自训练产物，避免手抄出错 |
 

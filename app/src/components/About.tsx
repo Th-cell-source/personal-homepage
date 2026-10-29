@@ -4,9 +4,10 @@ import { Reveal } from "./Reveal";
 
 interface AboutProps {
   onEdit: () => void;
+  locked: boolean;
 }
 
-export function About({ onEdit }: AboutProps) {
+export function About({ onEdit, locked }: AboutProps) {
   const { profile, isCustom } = useProfile();
 
   const facts = [
@@ -40,7 +41,7 @@ export function About({ onEdit }: AboutProps) {
             <div className="facts__head">
               <span>基本资料{isCustom ? " · 已本地修改" : ""}</span>
               <button className="mini" type="button" onClick={onEdit}>
-                编辑
+                {locked ? "管理" : "编辑"}
               </button>
             </div>
             {facts.map((fact) => (

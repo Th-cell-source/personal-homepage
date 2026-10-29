@@ -78,6 +78,7 @@ git add -A && git commit -m "..." && git push
 - **进场动画**：`Reveal` 组件用 `IntersectionObserver` 加 `.in`，`--d` 变量做错峰。
 - **可访问性**：语义标签、`aria-expanded`、`:focus-visible` 焦点环、`<noscript>` 兜底。
 - **个人信息编辑**：`ProfileContext` + `localStorage`，弹窗修改 8 个字段，保存即生效、刷新不丢，可一键恢复默认。
+- **管理口令**：编辑前需口令（首次设置），PBKDF2-SHA256 + 随机盐、只存哈希，连续 5 次错误锁定 30 秒，可「退出管理」。
 - **训练文件**：`?raw` 动态导入 8 个训练脚本（按需加载、带行号查看），指标与损失曲线来自 `training/artifacts`。
 
 ## 文档

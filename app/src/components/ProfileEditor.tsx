@@ -5,6 +5,7 @@ interface ProfileEditorProps {
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
+  onLock: () => void;
 }
 
 const LABELS: Array<{ key: keyof ProfileState; label: string; placeholder: string; hint?: string }> = [
@@ -13,13 +14,13 @@ const LABELS: Array<{ key: keyof ProfileState; label: string; placeholder: strin
   { key: "school", label: "学校", placeholder: "大连民族大学" },
   { key: "major", label: "专业", placeholder: "物联网工程" },
   { key: "grade", label: "年级", placeholder: "2024 级" },
-  { key: "studentId", label: "学号", placeholder: "2023250718", hint: "8~12 位数字" },
+  { key: "studentId", label: "学号", placeholder: "2023250718", hint: "6~14 位数字" },
   { key: "teacher", label: "指导教师", placeholder: "兰艳" },
   { key: "email", label: "邮箱（可选）", placeholder: "you@example.com", hint: "留空则不显示" },
 ];
 
 /** 个人信息编辑弹窗：改完存到 localStorage，刷新页面仍然生效 */
-export function ProfileEditor({ open, onClose, onSaved }: ProfileEditorProps) {
+export function ProfileEditor({ open, onClose, onSaved, onLock }: ProfileEditorProps) {
   const { profile, save, reset } = useProfile();
   const [draft, setDraft] = useState<ProfileState>(profile);
   const [error, setError] = useState("");
@@ -114,12 +115,28 @@ export function ProfileEditor({ open, onClose, onSaved }: ProfileEditorProps) {
           ))}
         </div>
 
-        {error ? <p className="form__error" role="alert">{error}</p> : null}
+        {error ? (
+          <p className="form__error" role="alert">
+            {error}
+          </p>
+        ) : null}
 
         <footer className="modal__foot">
-          <button type="button" className="btn btn--ghost" onClick={restore}>
-            恢复默认
-          </button>
+          <div className="modal__actions">
+            <button type="button" className="btn btn--ghost" onClick={restore}>
+              恢复默认
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => {
+                onClose();
+                onLock();
+              }}
+            >
+              退出管理
+            </button>
+          </div>
           <div className="modal__actions">
             <button type="button" className="btn btn--ghost" onClick={onClose}>
               取消

@@ -544,3 +544,14 @@
   .local__path { grid-area: path; }
   .local__row-actions { grid-area: actions; }
 }
+
+/* ===================== 管理口令 ===================== */
+.modal__panel--narrow { width: min(440px, 100%); }
+.form--single { grid-template-columns: 1fr; }
+.passcode__hint {
+  margin-top: 14px; font-size: 11.5px; line-height: 1.75; color: var(--ink3);
+  padding: 10px 12px; border-radius: 8px; background: rgba(0, 240, 255, 0.04);
+  border: 1px dashed rgba(0, 240, 255, 0.22);
+}
+.passcode__attempts { font-size: 11.5px; color: #ff8fb1; }
+.nav__edit svg { margin-right: 4px; vertical-align: -1px; }
