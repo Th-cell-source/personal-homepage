@@ -7,6 +7,7 @@ import { Skills } from "./components/Skills";
 import { Projects } from "./components/Projects";
 import { TrainingSection } from "./components/TrainingSection";
 import { Journey } from "./components/Journey";
+import { LocalSection } from "./components/LocalSection";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import { ProfileEditor } from "./components/ProfileEditor";
@@ -37,6 +38,7 @@ export default function App() {
         <Projects />
         <TrainingSection />
         <Journey />
+        <LocalSection />
         <Contact />
         <Footer />
       </main>

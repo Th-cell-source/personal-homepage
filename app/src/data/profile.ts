@@ -151,5 +151,6 @@ export const navItems = [
   { href: "#projects", label: "项目" },
   { href: "#training", label: "训练" },
   { href: "#journey", label: "实训" },
+  { href: "#local", label: "本地" },
   { href: "#contact", label: "联系" },
 ];
