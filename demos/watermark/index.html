@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070d">
+<title>图片水印助手 · 在线加水印</title>
+<style>
+  :root {
+    --bg:#05070d; --panel:rgba(255,255,255,.045); --line:rgba(0,240,255,.16);
+    --ink:#e8fbff; --ink2:#a9c6d3; --ink3:#6d8798;
+    --cyan:#00f0ff; --magenta:#ff2d95;
+    --grad:linear-gradient(100deg,#00d9e8,#2bb3ff 46%,#ff2d95);
+    --mono:Consolas,"Cascadia Code",monospace;
+    --sans:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(900px 500px at 8% -10%,rgba(255,45,149,.16),transparent 62%),
+               radial-gradient(820px 500px at 96% 0%,rgba(0,240,255,.14),transparent 64%)}
+  .wrap{position:relative;width:min(1100px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--grad);color:#04121a;font-weight:800}
+  .brand b{font-size:16px;letter-spacing:.02em}
+  .brand span{display:block;font-size:10px;color:var(--ink3);letter-spacing:.2em}
+  .back{font-size:13px;color:var(--ink2);text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.2)}
+  .back:hover{color:var(--cyan)}
+  h1{font-size:clamp(22px,3.4vw,30px);margin-bottom:6px}
+  .lead{color:var(--ink2);font-size:13.5px;margin-bottom:20px}
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:start}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:16px}
+  .drop{border:1.5px dashed rgba(0,240,255,.3);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;transition:.2s}
+  .drop:hover,.drop.on{border-color:var(--cyan);background:rgba(0,240,255,.06)}
+  .drop b{display:block;margin-bottom:4px}
+  .drop small{color:var(--ink3)}
+  .field{margin-top:14px}
+  .field label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink2);margin-bottom:6px}
+  .field label em{font-style:normal;color:var(--cyan);font-family:var(--mono);font-size:11.5px}
+  input[type=text],select{width:100%;padding:9px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.35);color:var(--ink);font-size:13.5px;outline:none}
+  input[type=text]:focus,select:focus{border-color:rgba(0,240,255,.5)}
+  input[type=range]{width:100%;accent-color:#00f0ff}
+  input[type=color]{width:100%;height:34px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:transparent}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-top:14px}
+  .check input{accent-color:#00f0ff;width:15px;height:15px}
+  .btn{display:block;width:100%;margin-top:16px;padding:12px;border:0;border-radius:9px;cursor:pointer;
+    font-size:14px;font-weight:700;color:#04121a;background:var(--grad);transition:.2s}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn:hover:not(:disabled){filter:drop-shadow(0 8px 22px rgba(0,240,255,.45));transform:translateY(-1px)}
+  .preview{display:grid;place-items:center;min-height:260px;border-radius:12px;border:1px solid rgba(255,255,255,.08);
+    background:repeating-conic-gradient(rgba(255,255,255,.05) 0% 25%,transparent 0% 50%) 50%/18px 18px;overflow:hidden}
+  .preview img,.preview canvas{max-width:100%;height:auto;display:block}
+  .hint{font-size:12px;color:var(--ink3);margin-top:10px}
+
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="../../">
+      <span class="mark">田</span>
+      <span><b>图片水印助手</b><span>WATERMARK TOOL</span></span>
+    </a>
+    <a class="back" href="../../">← 返回个人主页</a>
+  </header>
+
+  <h1>给图片加文字水印</h1>
+  <p class="lead">纯本地处理：图片不上传服务器，全部在你的浏览器里完成。支持九宫格定位、透明度、颜色与平铺。</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="drop" id="drop">
+        <b>点击选择图片，或拖拽到这里</b>
+        <small>支持 JPG / PNG / WebP，建议不超过 20 MB</small>
+        <input type="file" id="file" accept="image/*" hidden>
+      </div>
+
+      <div class="field">
+        <label>水印文字 <em id="len">0 字</em></label>
+        <input type="text" id="text" maxlength="40" value="田昊 · 智语 Chat">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>字号 <em id="sizeVal">28</em></label>
+          <input type="range" id="size" min="8" max="120" value="28">
+        </div>
+        <div class="field">
+          <label>透明度 <em id="opVal">0.55</em></label>
+          <input type="range" id="opacity" min="5" max="100" value="55">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>位置</label>
+          <select id="pos">
+            <option value="br" selected>右下角</option>
+            <option value="bl">左下角</option>
+            <option value="tr">右上角</option>
+            <option value="tl">左上角</option>
+            <option value="c">居中</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>颜色</label>
+          <input type="color" id="color" value="#ffffff">
+        </div>
+      </div>
+
+      <label class="check"><input type="checkbox" id="tile"> 平铺整张图（防裁剪）</label>
+      <button class="btn" id="save" disabled>下载带水印的图片</button>
+      <p class="hint">提示：水印默认带描边，深色浅色底图都看得清；平铺模式适合证件、截图类图片。</p>
+    </div>
+
+    <div class="card">
+      <div class="preview" id="preview">
+        <p style="color:var(--ink3);font-size:13px">预览会显示在这里</p>
+      </div>
+      <p class="hint" id="meta">尚未选择图片</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var fileEl = document.getElementById("file");
+  var dropEl = document.getElementById("drop");
+  var textEl = document.getElementById("text");
+  var sizeEl = document.getElementById("size");
+  var opEl = document.getElementById("opacity");
+  var posEl = document.getElementById("pos");
+  var colorEl = document.getElementById("color");
+  var tileEl = document.getElementById("tile");
+  var saveEl = document.getElementById("save");
+  var previewEl = document.getElementById("preview");
+  var metaEl = document.getElementById("meta");
+  var lenEl = document.getElementById("len");
+  var sizeVal = document.getElementById("sizeVal");
+  var opVal = document.getElementById("opVal");
+
+  var img = null;
+  var canvas = document.createElement("canvas");
+
+  function pick(file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var im = new Image();
+      im.onload = function () {
+        img = im;
+        canvas.width = im.naturalWidth;
+        canvas.height = im.naturalHeight;
+        previewEl.innerHTML = "";
+        previewEl.appendChild(canvas);
+        saveEl.disabled = false;
+        metaEl.textContent = "原图 " + im.naturalWidth + " × " + im.naturalHeight + " px · " + file.name;
+        render();
+      };
+      im.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function render() {
+    if (!img) return;
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+
+    var text = textEl.value || "水印";
+    var ratio = Math.max(canvas.width, canvas.height) / 1000;
+    var size = Math.max(10, Number(sizeEl.value) * Math.max(0.55, ratio));
+    var alpha = Number(opEl.value) / 100;
+    var pad = Math.round(size * 0.8);
+
+    ctx.font = "600 " + size + "px 'PingFang SC','Microsoft YaHei',sans-serif";
+    ctx.textBaseline = "alphabetic";
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = Math.max(1.5, size * 0.12);
+    ctx.strokeStyle = "rgba(0,0,0,.45)";
+    ctx.fillStyle = colorEl.value;
+    ctx.shadowColor = "rgba(0,0,0,.35)";
+    ctx.shadowBlur = size * 0.35;
+
+    if (tileEl.checked) {
+      var stepX = ctx.measureText(text).width + size * 2.4;
+      var stepY = size * 3.2;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(-Math.PI / 8);
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+      for (var y = -canvas.height; y < canvas.height * 2; y += stepY) {
+        for (var x = -canvas.width; x < canvas.width * 2; x += stepX) {
+          ctx.strokeText(text, x, y);
+          ctx.fillText(text, x, y);
+        }
+      }
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    } else {
+      var w = ctx.measureText(text).width;
+      var x = pad, y = canvas.height - pad;
+      if (posEl.value === "br") { x = canvas.width - w - pad; y = canvas.height - pad; }
+      if (posEl.value === "bl") { x = pad; y = canvas.height - pad; }
+      if (posEl.value === "tr") { x = canvas.width - w - pad; y = pad + size; }
+      if (posEl.value === "tl") { x = pad; y = pad + size; }
+      if (posEl.value === "c") { x = (canvas.width - w) / 2; y = canvas.height / 2 + size / 3; }
+      ctx.strokeText(text, x, y);
+      ctx.fillText(text, x, y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    lenEl.textContent = text.length + " 字";
+    sizeVal.textContent = sizeEl.value;
+    opVal.textContent = (alpha).toFixed(2);
+  }
+
+  dropEl.addEventListener("click", function () { fileEl.click(); });
+  fileEl.addEventListener("change", function (e) { pick(e.target.files[0]); });
+  ["dragenter", "dragover"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) { e.preventDefault(); dropEl.classList.add("on"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) { e.preventDefault(); dropEl.classList.remove("on"); });
+  });
+  dropEl.addEventListener("drop", function (e) {
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) pick(e.dataTransfer.files[0]);
+  });
+
+  [textEl, sizeEl, opEl, posEl, colorEl, tileEl].forEach(function (el) {
+    el.addEventListener("input", render);
+    el.addEventListener("change", render);
+  });
+
+  saveEl.addEventListener("click", function () {
+    if (!img) return;
+    var a = document.createElement("a");
+    a.download = "watermarked-" + Date.now() + ".png";
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

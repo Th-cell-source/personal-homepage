@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070d">
+<title>AI 翻译助手 · 中英互译</title>
+<style>
+  :root {
+    --bg:#05070d; --panel:rgba(255,255,255,.045); --line:rgba(0,240,255,.16);
+    --ink:#e8fbff; --ink2:#a9c6d3; --ink3:#6d8798;
+    --cyan:#00f0ff; --magenta:#ff2d95;
+    --grad:linear-gradient(100deg,#00d9e8,#2bb3ff 46%,#ff2d95);
+    --mono:Consolas,"Cascadia Code",monospace;
+    --sans:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(900px 500px at 8% -10%,rgba(255,45,149,.16),transparent 62%),
+               radial-gradient(820px 500px at 96% 0%,rgba(0,240,255,.14),transparent 64%)}
+  .wrap{position:relative;width:min(1000px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--grad);color:#04121a;font-weight:800}
+  .brand b{font-size:16px}
+  .brand span{display:block;font-size:10px;color:var(--ink3);letter-spacing:.2em}
+  .back{font-size:13px;color:var(--ink2);text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.2)}
+  .back:hover{color:var(--cyan)}
+  h1{font-size:clamp(22px,3.4vw,30px);margin-bottom:6px}
+  .lead{color:var(--ink2);font-size:13.5px;margin-bottom:20px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+  .seg{display:inline-flex;border:1px solid rgba(255,255,255,.12);border-radius:9px;overflow:hidden}
+  .seg button{background:transparent;border:0;color:var(--ink2);padding:8px 13px;font-size:13px;cursor:pointer;font-family:inherit}
+  .seg button.on{background:rgba(0,240,255,.14);color:var(--ink)}
+  .btn{padding:9px 18px;border:0;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;
+    color:#04121a;background:var(--grad);transition:.2s}
+  .btn:hover:not(:disabled){filter:drop-shadow(0 8px 22px rgba(0,240,255,.4));transform:translateY(-1px)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(0,240,255,.25);font-weight:600}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px;display:flex;flex-direction:column;min-height:300px}
+  .card__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;color:var(--ink3);font-family:var(--mono)}
+  textarea{flex:1;width:100%;resize:none;border:0;outline:none;background:transparent;color:var(--ink);
+    font-size:15px;line-height:1.7;font-family:inherit;min-height:220px}
+  textarea::placeholder{color:var(--ink3)}
+  .out{flex:1;white-space:pre-wrap;font-size:15px;line-height:1.7;color:var(--ink);overflow:auto;min-height:220px}
+  .out.empty{color:var(--ink3)}
+  .foot{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+  .status{font-size:12.5px;color:var(--ink3)}
+  .status.err{color:#ff8fb1}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}.card{min-height:220px}textarea,.out{min-height:150px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="../../">
+      <span class="mark">田</span>
+      <span><b>AI 翻译助手</b><span>TRANSLATOR</span></span>
+    </a>
+    <a class="back" href="../../">← 返回个人主页</a>
+  </header>
+
+  <h1>中英互译，一句话就够</h1>
+  <p class="lead">支持自动识别方向与手动指定。调用公开翻译接口，无需登录；单次建议 500 字以内。</p>
+
+  <div class="bar">
+    <div class="seg" id="dir">
+      <button data-dir="auto" class="on">自动</button>
+      <button data-dir="zh2en">中 → 英</button>
+      <button data-dir="en2zh">英 → 中</button>
+    </div>
+    <button class="btn" id="go">翻译</button>
+    <button class="btn ghost" id="swap">交换方向</button>
+    <button class="btn ghost" id="copy" disabled>复制译文</button>
+    <button class="btn ghost" id="clear">清空</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card__head"><span>原文</span><span id="count">0 字</span></div>
+      <textarea id="src" placeholder="在这里输入中文或英文，Ctrl + Enter 直接翻译"></textarea>
+    </div>
+    <div class="card">
+      <div class="card__head"><span>译文</span><span id="took"></span></div>
+      <div class="out empty" id="out">译文会显示在这里</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="status" id="status">就绪</span>
+    <span class="status">接口：MyMemory（公开免费，可能有速率限制）</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var srcEl = document.getElementById("src");
+  var outEl = document.getElementById("out");
+  var goEl = document.getElementById("go");
+  var swapEl = document.getElementById("swap");
+  var copyEl = document.getElementById("copy");
+  var clearEl = document.getElementById("clear");
+  var countEl = document.getElementById("count");
+  var tookEl = document.getElementById("took");
+  var statusEl = document.getElementById("status");
+  var dirEl = document.getElementById("dir");
+  var dir = "auto";
+
+  dirEl.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    dir = b.getAttribute("data-dir");
+    [].forEach.call(dirEl.children, function (x) { x.classList.toggle("on", x === b); });
+  });
+
+  function setStatus(msg, isErr) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (isErr ? " err" : "");
+  }
+
+  function detect(text) {
+    return /[\u4e00-\u9fff]/.test(text) ? "zh2en" : "en2zh";
+  }
+
+  function pairFor(d) {
+    return d === "zh2en" ? "zh-CN|en" : "en|zh-CN";
+  }
+
+  function translate() {
+    var text = srcEl.value.trim();
+    if (!text) { setStatus("请输入要翻译的内容", true); return; }
+    var d = dir === "auto" ? detect(text) : dir;
+    var pair = pairFor(d);
+    goEl.disabled = true;
+    setStatus("翻译中…");
+    var t0 = performance.now();
+    var url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text.slice(0, 490)) + "&langpair=" + encodeURIComponent(pair);
+    fetch(url)
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (data) {
+        var t = data && data.responseData && data.responseData.translatedText;
+        if (!t) throw new Error("接口未返回译文");
+        outEl.textContent = t;
+        outEl.classList.remove("empty");
+        copyEl.disabled = false;
+        tookEl.textContent = Math.round(performance.now() - t0) + " ms";
+        setStatus((d === "zh2en" ? "中文 → 英文" : "英文 → 中文") + " · 完成");
+        if (text.length > 490) setStatus("内容超过 490 字，仅翻译了前 490 字", true);
+      })
+      .catch(function (err) {
+        outEl.textContent = "翻译失败：" + err.message + "\n\n可以稍后重试，或手动切换翻译方向。";
+        outEl.classList.remove("empty");
+        setStatus("请求失败", true);
+      })
+      .finally(function () {
+        goEl.disabled = false;
+      });
+  }
+
+  goEl.addEventListener("click", translate);
+  srcEl.addEventListener("input", function () {
+    countEl.textContent = srcEl.value.length + " 字";
+  });
+  srcEl.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") translate();
+  });
+
+  swapEl.addEventListener("click", function () {
+    var text = srcEl.value;
+    srcEl.value = outEl.classList.contains("empty") ? "" : outEl.textContent;
+    outEl.textContent = text || "译文会显示在这里";
+    outEl.classList.toggle("empty", !text);
+    countEl.textContent = srcEl.value.length + " 字";
+    dir = dir === "zh2en" ? "en2zh" : dir === "en2zh" ? "zh2en" : "auto";
+    [].forEach.call(dirEl.children, function (x) { x.classList.toggle("on", x.getAttribute("data-dir") === dir); });
+  });
+
+  copyEl.addEventListener("click", function () {
+    var t = outEl.textContent;
+    if (!t) return;
+    navigator.clipboard.writeText(t).then(function () {
+      setStatus("已复制到剪贴板");
+    }).catch(function () {
+      setStatus("复制失败，请手动选择", true);
+    });
+  });
+
+  clearEl.addEventListener("click", function () {
+    srcEl.value = "";
+    outEl.textContent = "译文会显示在这里";
+    outEl.classList.add("empty");
+    copyEl.disabled = true;
+    countEl.textContent = "0 字";
+    tookEl.textContent = "";
+    setStatus("就绪");
+    srcEl.focus();
+  });
+})();
+</script>
+</body>
+</html>
