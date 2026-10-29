@@ -4,86 +4,97 @@
 
 | 层 | 选型 | 说明 |
 | --- | --- | --- |
-| 结构 | HTML5 语义标签 | `header / main / section / article / footer` |
-| 样式 | CSS3（自定义属性 + Grid/Flex + 媒体查询） | 单文件内联，无预处理器 |
-| 交互 | 原生 JavaScript（ES5 语法，IIFE 包裹） | 无框架、无构建、无 polyfill |
-| 图形 | Canvas 2D | 粒子连线背景 |
-| 字体 | 系统字体栈 | 中文 PingFang/微软雅黑，等宽用 Consolas/Cascadia |
-| 部署 | GitHub Pages | main 分支根目录，自动 HTTPS |
+| 框架 | React 18 | 函数组件 + Hooks，`StrictMode` 下幂等 |
+| 语言 | TypeScript 5 | `strict`、`noUnusedLocals`、`jsx: react-jsx` |
+| 构建 | Vite 5 | `root: app`、`base: /personal-homepage/`、`outDir: dist` |
+| 样式 | 原生 CSS | CSS 变量做设计令牌，Grid/Flex 布局，三个断点 |
+| 图形 | Canvas 2D | 粒子连线背景，自定义 Hook 封装 |
+| 部署 | GitHub Pages | `main` 根目录托管构建产物，配 `.nojekyll` |
 
-**零外部请求**：不引用任何 CDN、字体、图标库、统计脚本。断网也能完整呈现（外链跳转除外）。
+## 2. 为什么用 React + TypeScript
 
-## 2. 为什么选这个栈
-
-- 页面是单页作品集，内容静态、无数据交互，上框架属于杀鸡用牛刀。
-- 单文件体量 ≈ 30 KB，首屏无网络等待，Lighthouse 分数天然高。
-- GitHub Pages 免费、自动 HTTPS、推送即发布，适合课程作业。
-- 纯原生实现能体现"手写 CSS/JS"的基本功，答辩时每一行都能讲清楚。
+- 老师明确要求不要交单文件 HTML，要用框架工程；
+- 页面有 8 个区块、多个可复用卡片，组件化后改一处不影响别处；
+- 数据（个人信息、技能、项目、时间线）集中在 `profile.ts`，组件只负责渲染，内容维护成本低；
+- TypeScript 能在构建期挡住"props 传错、字段拼错"这类低级错误，`npm run build` 就是最便宜的测试。
 
 ## 3. 目录结构
 
 ```
 personal-homepage/
-├── index.html        # 页面 + 样式 + 脚本（单文件）
-├── PRD.md            # 产品需求文档
-├── TECH.md           # 本文件
-├── AGENT.md          # AI 协作规范
-├── README.md         # 仓库说明
-└── screenshots/      # 预览图（README 引用）
+├── app/                        # Vite root（源码）
+│   ├── index.html              # 入口模板（含 meta / og / noscript）
+│   └── src/
+│       ├── main.tsx            # createRoot 挂载 + 引入全局样式
+│       ├── App.tsx             # 组合区块 + 导航高亮
+│       ├── components/
+│       │   ├── Backdrop.tsx    # 极光 + 网格 + 粒子 + 进度条
+│       │   ├── Nav.tsx         # 固定导航 + 移动端菜单
+│       │   ├── Hero.tsx        # 首屏 + 终端名片 + 数据条
+│       │   ├── About.tsx / Skills.tsx / Projects.tsx / Journey.tsx / Contact.tsx
+│       │   ├── Footer.tsx
+│       │   └── Reveal.tsx      # 进场动画包装组件
+│       ├── hooks/
+│       │   ├── useParticles.ts     # Canvas 粒子
+│       │   └── useScrollFx.ts      # 进度条 + 区块高亮
+│       ├── data/profile.ts     # 唯一数据源
+│       └── styles/global.css   # 设计令牌 + 全部样式
+├── scripts/copy-dist.mjs       # 构建产物 → 仓库根目录
+├── index.html + assets/        # 发布产物（Pages 托管）
+├── legacy/index.single-file.html  # 早期单文件版本（留档）
+└── PRD.md / TECH.md / AGENT.md / README.md
 ```
 
 ## 4. 关键技术点
 
-| 技术点 | 实现方式 | 为什么这么做 |
+| 技术点 | 实现 | 为什么 |
 | --- | --- | --- |
-| 设计令牌 | `:root` 里定义颜色/字体/缓动/尺寸变量，按钮区域再派生 `--grad-btn` | 换肤只改一处；按钮需要更饱和的渐变，文字渐变需要更亮的中间色，所以拆成两条 |
-| 切角按钮 | `clip-path: polygon(...)` | 用纯 CSS 做出"科幻 HUD"切角，不需要图片或 SVG |
-| 毛玻璃导航 | `backdrop-filter: blur(16px) saturate(140%)` + 半透明底 | 滚动时内容从导航下方透出，层次清楚 |
-| 粒子背景 | Canvas 2D：72 个节点、三段距离阈值分桶画线、指针 160px 内吸附 | 分桶把 O(n²) 的连线绘制压到 3 次 `stroke()`；上限 72 个节点保证低端机不卡 |
-| 高分屏 | `devicePixelRatio` 上限取 2，按 DPR 放大画布再 `setTransform` 缩放 | 避免 3x 屏上画 3 倍像素导致掉帧 |
-| 页面隐藏暂停 | `visibilitychange` 里 `cancelAnimationFrame` | 切到别的标签页不空转 CPU |
-| 进场动画 | `IntersectionObserver` + `.reveal.in`，用 `--d` 做错峰 | 比监听 scroll 便宜，且天然只触发一次 |
-| 导航高亮 | 第二个 `IntersectionObserver`，`rootMargin: -45% 0 -50%` | 让"屏幕中线附近"的区块成为当前区块，比算 offsetTop 稳 |
-| 滚动进度 | `scrollY / (scrollHeight - innerHeight)` | 一条 2px 渐变进度条，成本极低但反馈明确 |
-| 减少动效 | `prefers-reduced-motion: reduce` 关闭 transition/粒子运动，只画静态一帧 | 无障碍要求，也避免晕动症用户不适 |
-| 无 JS 兜底 | `<noscript>` 里强制 `.reveal { opacity: 1 }` | JS 被禁用时内容不能消失 |
-| 移动端菜单 | `.nav.is-open` 切换，`aria-expanded` 同步 | 纯 CSS + 一个 class，不引入抽屉库 |
-| SEO / 分享 | `description`、`og:*`、`theme-color`、语义化标题层级 | 微信/GitHub 分享时有正确标题与描述 |
+| 设计令牌 | `:root` 定义颜色/字体/缓动/尺寸；按钮另用更饱和的 `--grad-btn` | 换肤只改一处；文字渐变需要更亮中间色，按钮需要更饱和，拆成两条 |
+| 组件拆分 | 8 个区块组件 + 2 个基础组件（Backdrop/Reveal） | 职责单一，改区块不动全局 |
+| 数据与视图分离 | `profile.ts` 导出 `profile / stats / skills / projects / journey` | 改文案不用碰 JSX |
+| 粒子背景 | `useParticles`：节点数按面积自适应（≤72）、距离分三档分桶绘制、DPR ≤ 2、`visibilitychange` 暂停、指针 160px 吸附 | 分桶把 O(n²) 连线压成 3 次 `stroke()`；上限保证低端机不卡 |
+| 滚动进度 | `useScrollProgress`：`scrollY / (scrollHeight - innerHeight)` | 一条 2px 进度条，成本极低、反馈明确 |
+| 区块高亮 | `useSectionSpy`：`IntersectionObserver` + `rootMargin: -45% 0 -50%` | 不用算 offsetTop，滚动性能好 |
+| 进场动画 | `Reveal` 组件观察自身，加 `.in`；`--d` 控制错峰 | 每个元素独立触发，天然只跑一次 |
+| 移动端菜单 | `useState` 控制 `.is-open`，同步 `aria-expanded` | 纯 CSS 动画，无抽屉库 |
+| 减少动效 | `prefers-reduced-motion` 下只画静态一帧、关闭过渡 | 无障碍要求 |
+| 无 JS 兜底 | `app/index.html` 里 `<noscript>` 强制 `.reveal` 显示 | 内容不能因脚本失败而消失 |
+| 发布策略 | `npm run publish:pages` 把 `dist/` 拷到仓库根 | 复用现有 Pages（main / root）配置，不改仓库设置 |
 
-## 5. 性能与兼容
+## 5. 构建与性能
 
-| 指标 | 目标 | 实测 |
-| --- | --- | --- |
-| 首屏内容 | < 1s（本地） | 单文件，无阻塞请求 |
-| 动画帧率 | ≥ 55fps | 节点上限 72 + 分桶绘制 |
-| 横向溢出 | 0 | 1425 / 1440（1440 视口） |
-| 浏览器 | Chrome/Edge 100+、Safari 15+、移动端 | `clip-path`、`backdrop-filter`、`IntersectionObserver` 均在范围内；旧浏览器降级为不透明导航、无切角 |
+| 指标 | 数值 |
+| --- | --- |
+| 构建命令 | `tsc --noEmit && vite build`（类型检查 + 打包） |
+| 产物 | `index.html` 1.1 KB、CSS 14.4 KB（gzip 3.9 KB）、JS 158.8 KB（gzip 52.8 KB） |
+| 构建耗时 | ≈1 s |
+| 首屏 | 无外部请求，单页应用首帧即渲染 |
+| 兼容 | Chrome/Edge 100+、Safari 15+；`clip-path`、`backdrop-filter`、`IntersectionObserver` 均在范围内 |
 
-## 6. 部署流程
+## 6. 本地开发
 
 ```bash
-git add .
-git commit -m "重做个人主页：深色科技风 + 作品集结构"
-git push origin main
+npm install
+npm run dev      # http://localhost:5174/personal-homepage/
+npm run build    # 类型检查 + 打包到 dist/
+npm run preview  # 预览构建产物
 ```
 
-1. 仓库 Settings → Pages → Deploy from a branch → `main` / `/ (root)`
-2. 等待约 1 分钟构建
-3. 访问 `https://th-cell-source.github.io/personal-homepage/`
-4. 建议勾选 Enforce HTTPS
-
-## 7. 本地预览
+## 7. 发布流程
 
 ```bash
-# 方式一：直接双击 index.html（纯静态，file:// 可用）
-# 方式二：起个静态服务器，避免个别浏览器的 file:// 限制
-python -m http.server 8080
-# 打开 http://127.0.0.1:8080
+npm run publish:pages                 # 构建并拷到根目录
+git add -A && git commit -m "..."     # 提交源码与产物
+git push origin main                  # 触发 Pages 自动发布
 ```
 
-## 8. 后续扩展方向
+1. 仓库 Settings → Pages → Deploy from a branch → `main` / `(root)`
+2. 约 1 分钟生效，访问 `https://th-cell-source.github.io/personal-homepage/`
+3. 建议勾选 Enforce HTTPS
 
-- 深/浅主题切换（把 `:root` 变量抽成两套，按钮切换 `data-theme`）。
-- 接入 GitHub API 展示仓库列表与 star 数（需处理缓存与限流）。
-- 项目卡片补充截图缩略图（`loading="lazy"` + `aspect-ratio` 占位，避免布局抖动）。
-- 增加 RSS 或文章列表（另起项目，不塞进单页）。
+## 8. 后续扩展
+
+- 深/浅主题切换：`data-theme` + 两套变量。
+- 项目卡片加截图：`loading="lazy"` + `aspect-ratio` 占位，避免布局抖动。
+- 单元测试：Vitest + Testing Library 覆盖 `Reveal` 与数据渲染。
+- 接入 GitHub API 展示仓库列表（需缓存与限流）。
