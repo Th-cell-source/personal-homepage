@@ -626,3 +626,34 @@
   .login__card { padding: 24px 20px 20px; }
   .login h1 { font-size: 22px; }
 }
+
+/* ===================== 成果入口 ===================== */
+.deliverables { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.deliverable {
+  position: relative; display: flex; flex-direction: column; gap: 8px;
+  padding: 20px; border-radius: 14px; border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  transition: transform 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s;
+}
+.deliverable:hover { transform: translateY(-3px); border-color: rgba(0, 240, 255, 0.32); box-shadow: 0 26px 60px -44px rgba(0, 240, 255, 0.8); }
+.deliverable__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.deliverable__index { font-family: var(--mono); font-size: 12px; color: var(--cyan); letter-spacing: 0.12em; }
+.badge {
+  font-size: 10.5px; padding: 3px 9px; border-radius: 99px; font-family: var(--mono);
+  border: 1px solid transparent; white-space: nowrap;
+}
+.badge--live { color: #7bffc4; background: rgba(0, 255, 153, 0.1); border-color: rgba(0, 255, 153, 0.32); }
+.badge--local { color: var(--cyan); background: rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); }
+.badge--pending { color: var(--amber); background: rgba(255, 209, 102, 0.1); border-color: rgba(255, 209, 102, 0.3); }
+.deliverable h3 { font-size: 17px; letter-spacing: 0.01em; }
+.deliverable__kind { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+.deliverable p { font-size: 12.5px; color: var(--ink2); flex: 1; }
+.deliverable__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.deliverable__actions .mini { text-decoration: none; display: inline-flex; align-items: center; }
+.mini--off { color: var(--ink3); border-color: rgba(255, 255, 255, 0.1); background: transparent; }
+.deliverable__status { font-size: 11px; color: var(--ink3); font-family: var(--mono); }
+.deliverables__note {
+  margin-top: 16px; font-size: 12px; line-height: 1.8; color: var(--ink3);
+  padding: 12px 14px; border-radius: 9px; border: 1px dashed rgba(0, 240, 255, 0.2);
+  background: rgba(0, 240, 255, 0.03);
+}

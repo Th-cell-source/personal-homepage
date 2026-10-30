@@ -8,6 +8,7 @@ import { Projects } from "./components/Projects";
 import { TrainingSection } from "./components/TrainingSection";
 import { Journey } from "./components/Journey";
 import { LocalSection } from "./components/LocalSection";
+import { Deliverables } from "./components/Deliverables";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import { ProfileEditor } from "./components/ProfileEditor";
@@ -56,6 +57,7 @@ export default function App() {
         <TrainingSection />
         <Journey />
         <LocalSection />
+        <Deliverables />
         <Contact />
         <Footer />
       </main>

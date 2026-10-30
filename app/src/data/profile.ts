@@ -111,10 +111,10 @@ export const projects: Project[] = [
   {
     kind: "MAIN · AI 应用",
     title: "智语 Chat",
-    desc: "自建 175 万参数中文小模型 + 多模型对话系统。自己实现字节级 BPE 分词器与 GPT-2 同构模型，完成预训练、指令微调与 LoRA 角色微调，模型以原生 .pt 接入系统，支持 SSE 流式回答。",
+    desc: "自建 175 万参数中文小模型 + 多模型对话系统。自己实现字节级 BPE 分词器与 GPT-2 同构模型，完成预训练、指令微调与 LoRA 角色微调，模型以原生 .pt 接入系统，支持 SSE 流式回答。本机运行，点下面按钮直接打开。",
     tags: ["PyTorch", "FastAPI", "React", "SSE"],
-    link: "https://github.com/Th-cell-source",
-    linkText: "源码与说明 →",
+    link: "http://127.0.0.1:5173",
+    linkText: "打开智语 Chat →",
   },
   {
     kind: "DEPLOYED · 浏览器扩展",
@@ -152,5 +152,6 @@ export const navItems = [
   { href: "#training", label: "训练" },
   { href: "#journey", label: "实训" },
   { href: "#local", label: "本地" },
+  { href: "#deliverables", label: "成果" },
   { href: "#contact", label: "联系" },
 ];
