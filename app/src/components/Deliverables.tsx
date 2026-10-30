@@ -55,11 +55,14 @@ const items: Deliverable[] = [
   {
     index: "04",
     title: "秒搭（国内零代码平台）",
-    kind: "无代码应用",
-    status: "pending",
-    statusText: "链接待补",
-    desc: "用百度秒搭生成的「图片水印助手」。生成并发布后，把秒搭给的公网地址填到这里。",
-    actions: [{ label: "操作指引", href: "#local", note: "见 docs/零代码平台操作指引.md" }],
+    kind: "无代码应用 · 图片水印助手",
+    status: "live",
+    statusText: "已发布",
+    desc: "用百度秒搭生成并发布的「图片水印助手」：上传图片、自定义水印文字与位置、字号、透明度、颜色，支持平铺，一键导出 PNG。",
+    actions: [
+      { label: "打开应用", href: "https://app-ffoc6r7who1t.miaoda.online" },
+      { label: "秒搭平台", href: "https://miaoda.com", note: "无代码生成平台" },
+    ],
   },
   {
     index: "05",
