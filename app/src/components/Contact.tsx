@@ -1,16 +1,20 @@
-import { useProfile } from "../context/ProfileContext";
+import { useSite } from "../context/SiteContext";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
 export function Contact() {
-  const { profile } = useProfile();
+  const { site } = useSite();
+  const { profile, contact } = site;
 
   return (
     <section className="section" id="contact">
       <div className="wrap">
+        <SectionHead id="contact" />
+
         <Reveal className="contact">
           <div>
-            <h2>想聊聊项目，或者一起做点什么？</h2>
-            <p>课程作业、实习机会、技术问题都欢迎。代码基本都在 GitHub 上，插件与主页可以直接在线访问。</p>
+            <h2>{contact.title}</h2>
+            <p>{contact.desc}</p>
             <div className="contact__links">
               <a className="btn btn--primary" href="https://github.com/Th-cell-source" target="_blank" rel="noopener noreferrer">
                 去 GitHub 看看 →

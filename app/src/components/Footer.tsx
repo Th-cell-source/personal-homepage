@@ -1,7 +1,8 @@
-import { useProfile } from "../context/ProfileContext";
+import { useSite } from "../context/SiteContext";
 
 export function Footer() {
-  const { profile } = useProfile();
+  const { site } = useSite();
+  const { profile } = site;
 
   return (
     <div className="wrap">

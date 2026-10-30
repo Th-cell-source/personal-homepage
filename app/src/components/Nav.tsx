@@ -1,6 +1,16 @@
 import { useState } from "react";
-import { navItems } from "../data/profile";
-import { useProfile } from "../context/ProfileContext";
+import { useSite } from "../context/SiteContext";
+
+const navItems = [
+  { href: "#about", label: "关于" },
+  { href: "#skills", label: "技能" },
+  { href: "#projects", label: "项目" },
+  { href: "#training", label: "训练" },
+  { href: "#journey", label: "实训" },
+  { href: "#local", label: "本地" },
+  { href: "#deliverables", label: "成果" },
+  { href: "#contact", label: "联系" },
+];
 
 interface NavProps {
   active: string;
@@ -10,7 +20,8 @@ interface NavProps {
 
 export function Nav({ active, onEdit, onLogout }: NavProps) {
   const [open, setOpen] = useState(false);
-  const { profile, isCustom } = useProfile();
+  const { site } = useSite();
+  const { profile } = site;
 
   return (
     <header className={`nav ${open ? "is-open" : ""}`}>
@@ -18,7 +29,7 @@ export function Nav({ active, onEdit, onLogout }: NavProps) {
         <span className="brand__mark">{profile.name.slice(0, 1)}</span>
         <span className="brand__text">
           {profile.name}
-          <span>TIAN HAO</span>
+          <span>{profile.latin}</span>
         </span>
       </a>
 
@@ -41,7 +52,7 @@ export function Nav({ active, onEdit, onLogout }: NavProps) {
             onEdit();
           }}
         >
-          编辑资料{isCustom ? " ·" : ""}
+          管理后台
         </button>
         <button className="nav__logout" type="button" onClick={onLogout}>
           退出登录

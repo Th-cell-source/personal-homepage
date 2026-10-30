@@ -11,19 +11,18 @@ import { LocalSection } from "./components/LocalSection";
 import { Deliverables } from "./components/Deliverables";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
-import { ProfileEditor } from "./components/ProfileEditor";
+import { AdminPanel } from "./components/AdminPanel";
 import { LoginPage } from "./components/LoginPage";
 import { ChangePasswordDialog } from "./components/ChangePasswordDialog";
 import { useSectionSpy } from "./hooks/useScrollFx";
 import { useAuth } from "./hooks/useAuth";
-import { navItems } from "./data/profile";
 
-const sectionIds = navItems.map((item) => item.href);
+const sectionIds = ["#about", "#skills", "#projects", "#training", "#journey", "#local", "#deliverables", "#contact"];
 
 export default function App() {
   const active = useSectionSpy(sectionIds);
   const auth = useAuth();
-  const [editing, setEditing] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
   const [toast, setToast] = useState("");
 
@@ -33,7 +32,6 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
-  // 未登录：只渲染登录页，主页内容不进 DOM
   if (!auth.authed) {
     return <LoginPage auth={auth} />;
   }
@@ -43,7 +41,7 @@ export default function App() {
       <Backdrop />
       <Nav
         active={active}
-        onEdit={() => setEditing(true)}
+        onEdit={() => setAdminOpen(true)}
         onLogout={() => {
           auth.logout();
           setToast("已退出登录");
@@ -51,7 +49,7 @@ export default function App() {
       />
       <main id="top">
         <Hero />
-        <About onEdit={() => setEditing(true)} />
+        <About onEdit={() => setAdminOpen(true)} />
         <Skills />
         <Projects />
         <TrainingSection />
@@ -62,15 +60,7 @@ export default function App() {
         <Footer />
       </main>
 
-      <ProfileEditor
-        open={editing}
-        onClose={() => setEditing(false)}
-        onSaved={() => setToast("个人信息已保存")}
-        onChangePassword={() => {
-          setEditing(false);
-          setChangingPw(true);
-        }}
-      />
+      <AdminPanel open={adminOpen} onClose={() => setAdminOpen(false)} onSaved={() => setToast("内容已保存")} />
       <ChangePasswordDialog
         open={changingPw}
         auth={auth}

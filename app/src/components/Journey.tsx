@@ -1,20 +1,18 @@
-import { journey } from "../data/profile";
+import { useSite } from "../context/SiteContext";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
 export function Journey() {
+  const { site } = useSite();
+
   return (
     <section className="section" id="journey">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">05</span>
-          <h2 className="section__title">实训历程</h2>
-          <span className="section__line" />
-          <span className="section__note">10.20 — 10.28</span>
-        </Reveal>
+        <SectionHead id="journey" />
 
         <div className="timeline">
-          {journey.map((item, index) => (
-            <Reveal className="tl" key={item.date} delay={index * 40}>
+          {site.journey.map((item, index) => (
+            <Reveal className="tl" key={`${item.date}-${item.title}`} delay={index * 40}>
               <div className="tl__date">{item.date}</div>
               <h3>{item.title}</h3>
               <p>{item.desc}</p>

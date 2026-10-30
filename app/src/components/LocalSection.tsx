@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { buildLauncher, localPaths } from "../data/localPaths";
+import { useSite } from "../context/SiteContext";
+import { buildLauncher } from "../data/localPaths";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
-/** 本地文件：把电脑上的训练文件与源码位置集中列出，并提供一键脚本 / 复制路径 */
+/** 本地文件：集中列出电脑上的项目路径，可一键生成启动脚本或复制路径 */
 export function LocalSection() {
+  const { site } = useSite();
   const [protocol, setProtocol] = useState("https:");
   const [copied, setCopied] = useState("");
-  const launcher = useMemo(() => buildLauncher(), []);
+  const launcher = useMemo(() => buildLauncher(site.locals), [site.locals]);
 
   useEffect(() => {
     setProtocol(window.location.protocol);
@@ -45,12 +48,7 @@ export function LocalSection() {
   return (
     <section className="section" id="local">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">06</span>
-          <h2 className="section__title">本地文件</h2>
-          <span className="section__line" />
-          <span className="section__note">on this pc</span>
-        </Reveal>
+        <SectionHead id="locals" />
 
         <Reveal className="local">
           <div className="local__intro">
@@ -60,8 +58,7 @@ export function LocalSection() {
             </p>
             <ol>
               <li>
-                <b>下载启动脚本</b>：双击生成的 <code>打开全部本地文件.bat</code>，会一次性打开训练目录、模型目录、报告，
-                装了 VS Code 还会打开两个工程。
+                <b>下载启动脚本</b>：双击生成的 <code>打开全部本地文件.bat</code>，会一次性打开各目录，装了 VS Code 还会打开工程。
               </li>
               <li>
                 <b>复制路径</b>：点右侧「复制」，在资源管理器地址栏按 <kbd>Ctrl</kbd> + <kbd>L</kbd> 粘贴回车。
@@ -71,8 +68,12 @@ export function LocalSection() {
               <button className="btn btn--primary" type="button" onClick={downloadLauncher}>
                 下载「打开全部本地文件.bat」
               </button>
-              <button className="btn btn--ghost" type="button" onClick={() => copy(localPaths[0].path, "训练代码")}>
-                复制训练目录
+              <button
+                className="btn btn--ghost"
+                type="button"
+                onClick={() => copy(site.locals[0]?.path ?? "", site.locals[0]?.label ?? "训练代码")}
+              >
+                复制第一个路径
               </button>
             </div>
             {canOpenDirectly ? (
@@ -85,8 +86,8 @@ export function LocalSection() {
           </div>
 
           <div className="local__list">
-            {localPaths.map((item) => (
-              <div className="local__row" key={item.path}>
+            {site.locals.map((item) => (
+              <div className="local__row" key={`${item.label}-${item.path}`}>
                 <div className="local__meta">
                   <b>{item.label}</b>
                   <span>{item.note}</span>

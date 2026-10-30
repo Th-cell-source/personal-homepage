@@ -1,104 +1,38 @@
+import { useEffect, useState } from "react";
+import { useSite } from "../context/SiteContext";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
-type Status = "live" | "local" | "pending";
+const STATUS_LABEL = { live: "已上线", local: "本机运行", pending: "待补齐" } as const;
 
-interface Action {
-  label: string;
-  href?: string;
-  note?: string;
-}
-
-interface Deliverable {
-  index: string;
-  title: string;
-  kind: string;
-  status: Status;
-  statusText: string;
-  desc: string;
-  actions: Action[];
-}
-
-const items: Deliverable[] = [
-  {
-    index: "01",
-    title: "个人网站",
-    kind: "静态站点 · React",
-    status: "live",
-    statusText: "已上线",
-    desc: "你正在看的这个站。Vite + React + TypeScript，带登录、资料编辑、训练文件展示，托管在 GitHub Pages。",
-    actions: [{ label: "打开网站", href: "https://th-cell-source.github.io/personal-homepage/" }],
-  },
-  {
-    index: "02",
-    title: "智语 Chat（AI 对话模型）",
-    kind: "本地系统 · 自训练模型",
-    status: "local",
-    statusText: "本机运行",
-    desc: "175 万参数中文小模型 + 多模型对话系统。模型跑在本机 CPU 上，需要先启动服务，所以给的是本机地址。",
-    actions: [
-      { label: "打开智语 Chat", href: "http://127.0.0.1:5173", note: "先运行「启动智语Chat」" },
-      { label: "接口文档", href: "http://127.0.0.1:8010/docs" },
-    ],
-  },
-  {
-    index: "03",
-    title: "电商图片下载助手",
-    kind: "Chrome 扩展 + 官网",
-    status: "live",
-    statusText: "已上线",
-    desc: "电商详情页一键抓图，支持预览、单张下载与 ZIP 打包；官网提供安装包下载与使用说明。",
-    actions: [
-      { label: "打开官网", href: "https://th-cell-source.github.io/ecom-img-downloader/index.html" },
-      { label: "下载扩展", href: "https://th-cell-source.github.io/ecom-img-downloader/ecom-img-downloader.zip" },
-    ],
-  },
-  {
-    index: "04",
-    title: "秒搭（国内零代码平台）",
-    kind: "无代码应用 · 图片水印助手",
-    status: "live",
-    statusText: "已发布",
-    desc: "用百度秒搭生成并发布的「图片水印助手」：上传图片、自定义水印文字与位置、字号、透明度、颜色，支持平铺，一键导出 PNG。",
-    actions: [
-      { label: "打开应用", href: "https://app-ffoc6r7who1t.miaoda.online" },
-      { label: "秒搭平台", href: "https://miaoda.com", note: "无代码生成平台" },
-    ],
-  },
-  {
-    index: "05",
-    title: "Bolt（国外零代码平台）",
-    kind: "无代码应用 · AI 翻译助手",
-    status: "live",
-    statusText: "已发布",
-    desc: "用 Bolt 生成并发布的「AI 翻译助手」：中英双向翻译、自动识别语向、复制译文、字数统计，界面深色科技风。",
-    actions: [
-      { label: "打开应用", href: "https://chinese-english-tran-pjxs.bolt.host" },
-      { label: "生成过程", href: "https://bolt.new", note: "Bolt 工作区" },
-    ],
-  },
-];
-
-const STATUS_LABEL: Record<Status, string> = {
-  live: "已上线",
-  local: "本机运行",
-  pending: "待补齐",
-};
-
-/** 五样成果的集中入口 */
+/** 五样成果的集中入口（内容全部来自管理后台） */
 export function Deliverables() {
+  const { site } = useSite();
+  const [copied, setCopied] = useState("");
+
+  useEffect(() => {
+    if (!copied) return undefined;
+    const timer = window.setTimeout(() => setCopied(""), 1800);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  const copyPath = async (path: string) => {
+    try {
+      await navigator.clipboard.writeText(path);
+      setCopied("路径已复制");
+    } catch {
+      setCopied("复制失败，请手动选择");
+    }
+  };
+
   return (
     <section className="section" id="deliverables">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">07</span>
-          <h2 className="section__title">成果入口</h2>
-          <span className="section__line" />
-          <span className="section__note">five deliverables</span>
-        </Reveal>
+        <SectionHead id="deliverables" />
 
         <div className="deliverables">
-          {items.map((item, index) => (
-            <Reveal className="deliverable" as="article" key={item.index} delay={index * 70}>
+          {site.deliverables.map((item, index) => (
+            <Reveal className="deliverable" as="article" key={`${item.index}-${item.title}`} delay={index * 70}>
               <div className="deliverable__top">
                 <span className="deliverable__index">{item.index}</span>
                 <span className={`badge badge--${item.status}`}>{STATUS_LABEL[item.status]}</span>
@@ -106,6 +40,16 @@ export function Deliverables() {
               <h3>{item.title}</h3>
               <span className="deliverable__kind">{item.kind}</span>
               <p>{item.desc}</p>
+
+              {item.path ? (
+                <div className="deliverable__path">
+                  <code title={item.path}>{item.path}</code>
+                  <button className="mini" type="button" onClick={() => copyPath(item.path ?? "")}>
+                    复制
+                  </button>
+                </div>
+              ) : null}
+
               <div className="deliverable__actions">
                 {item.actions.map((action) =>
                   action.href ? (
@@ -133,8 +77,12 @@ export function Deliverables() {
 
         <Reveal className="deliverables__note">
           说明：智语 Chat 的模型（175 万参数）跑在本机 CPU 上，没有公网部署，所以第 2 项是本机地址；
-          秒搭与 Bolt 属于平台生成的应用，链接要在各自平台发布后才有，拿到后填进第 4、5 项。
+          秒搭与 Bolt 是平台生成的应用，链接在各自平台发布后生效。卡片上的路径可直接复制到资源管理器打开。
         </Reveal>
+
+        <div className={`toast toast--inline ${copied ? "is-on" : ""}`} role="status" aria-live="polite">
+          {copied}
+        </div>
       </div>
     </section>
   );

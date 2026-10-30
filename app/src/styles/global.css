@@ -657,3 +657,68 @@
   padding: 12px 14px; border-radius: 9px; border: 1px dashed rgba(0, 240, 255, 0.2);
   background: rgba(0, 240, 255, 0.03);
 }
+
+/* ===================== 管理后台 ===================== */
+.admin { position: fixed; inset: 0; z-index: 85; display: grid; place-items: center; padding: 18px; }
+.admin__panel {
+  position: relative; width: min(980px, 100%); max-height: 90vh; display: flex; flex-direction: column;
+  border-radius: 16px; border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(10, 18, 28, 0.99), rgba(4, 8, 14, 0.99));
+  box-shadow: 0 50px 120px -60px rgba(0, 240, 255, 0.6);
+  overflow: hidden;
+}
+.admin__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft); }
+.admin__head h2 { font-size: 19px; margin-bottom: 4px; }
+.admin__head p { font-size: 12.5px; color: var(--ink3); }
+.admin__body { display: grid; grid-template-columns: 150px 1fr; min-height: 0; flex: 1; }
+.admin__tabs { display: flex; flex-direction: column; gap: 2px; padding: 12px 8px; border-right: 1px solid var(--line-soft); overflow: auto; }
+.admin__tabs button {
+  text-align: left; padding: 8px 10px; border-radius: 7px; cursor: pointer; font-family: inherit;
+  border: 1px solid transparent; background: transparent; color: var(--ink2); font-size: 12.5px;
+}
+.admin__tabs button:hover { background: rgba(0, 240, 255, 0.06); color: var(--ink); }
+.admin__tabs button.is-active { background: rgba(0, 240, 255, 0.12); color: var(--ink); border-color: rgba(0, 240, 255, 0.28); }
+.admin__content { padding: 16px 18px; overflow: auto; }
+.admin__sub { font-size: 13px; color: var(--ink2); margin: 14px 0 8px; font-weight: 600; }
+.admin__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--line-soft); flex-wrap: wrap; }
+.admin__foot-left, .admin__foot-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin__note { font-size: 11.5px; color: var(--cyan); opacity: 0; transition: opacity 0.2s; }
+.admin__note.is-on { opacity: 1; }
+
+.agrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.agrid--3 { grid-template-columns: 1fr 1fr 1fr; }
+.astack { display: grid; gap: 12px; }
+.afield { display: grid; gap: 5px; }
+.afield > span { font-size: 12px; color: var(--ink2); display: flex; align-items: baseline; gap: 6px; }
+.afield em { font-style: normal; font-size: 10.5px; color: var(--ink3); }
+.afield input, .afield textarea, .afield select {
+  width: 100%; padding: 8px 10px; border-radius: 7px; font-size: 13px; font-family: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(0, 0, 0, 0.35); color: var(--ink); outline: none;
+}
+.afield textarea { resize: vertical; line-height: 1.6; }
+.afield input:focus, .afield textarea:focus, .afield select:focus { border-color: rgba(0, 240, 255, 0.5); }
+
+.list-editor { display: grid; gap: 12px; }
+.list-editor__item { padding: 12px; border-radius: 10px; border: 1px solid var(--line-soft); background: rgba(255, 255, 255, 0.025); }
+.list-editor__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.list-editor__head b { font-size: 12.5px; color: var(--ink); }
+.list-editor__ops { display: inline-flex; gap: 6px; }
+.mini--danger { color: #ff8fb1; border-color: rgba(255, 143, 177, 0.35); }
+.mini--add { justify-self: start; padding: 7px 14px; }
+
+.deliverable__path {
+  display: flex; align-items: center; gap: 8px; margin: 2px 0 6px;
+  padding: 6px 8px; border-radius: 7px; border: 1px dashed rgba(0, 240, 255, 0.22);
+  background: rgba(0, 240, 255, 0.04);
+}
+.deliverable__path code {
+  flex: 1; font-family: var(--mono); font-size: 10.5px; color: var(--ink2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+@media (max-width: 860px) {
+  .admin__body { grid-template-columns: 1fr; }
+  .admin__tabs { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line-soft); }
+  .admin__tabs button { white-space: nowrap; }
+  .agrid, .agrid--3 { grid-template-columns: 1fr; }
+}

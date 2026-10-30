@@ -4,6 +4,7 @@ import pretrainCurve from "../assets/curves/pretrain.png";
 import sftCurve from "../assets/curves/sft.png";
 import loraCurve from "../assets/curves/lora.png";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
 interface LoadedFile {
   id: string;
@@ -95,12 +96,7 @@ export function TrainingSection() {
   return (
     <section className="section" id="training">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">04</span>
-          <h2 className="section__title">训练文件</h2>
-          <span className="section__line" />
-          <span className="section__note">model pipeline</span>
-        </Reveal>
+        <SectionHead id="training" />
 
         <Reveal className="pipeline">
           {trainingPipeline.map((step, index) => (

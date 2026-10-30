@@ -38,8 +38,9 @@ personal-homepage/
 │       │   ├── useParticles.ts     # Canvas 粒子
 │       │   ├── useScrollFx.ts      # 进度条 + 区块高亮
 │       │   └── useAuth.ts          # 登录校验（PBKDF2 + sessionStorage/localStorage）
-│       ├── context/ProfileContext.tsx  # 可编辑的个人信息（localStorage）
-│       ├── data/profile.ts     # 默认数据
+│       ├── context/SiteContext.tsx  # 站点全部内容（localStorage）
+│       ├── data/site.ts        # 内容默认值（类型 + 默认站点数据）
+│       ├── data/deliverables.ts # 五样成果默认值（含本机路径）
 │       ├── data/training.ts    # 训练脚本清单（?raw 懒加载）
 │       ├── data/training/*.py  # 训练源码副本（8 个脚本 + 4 个指标 JSON）
 │       └── styles/global.css   # 设计令牌 + 全部样式
@@ -64,7 +65,8 @@ personal-homepage/
 | 减少动效 | `prefers-reduced-motion` 下只画静态一帧、关闭过渡 | 无障碍要求 |
 | 无 JS 兜底 | `app/index.html` 里 `<noscript>` 强制 `.reveal` 显示 | 内容不能因脚本失败而消失 |
 | 发布策略 | `npm run publish:pages` 把 `dist/` 拷到仓库根 | 复用现有 Pages（main / root）配置，不改仓库设置 |
-| 个人信息编辑 | `ProfileContext` + `localStorage`（key `tianhao:profile:v1`），`sanitize` 校验字段，默认值不落库 | 纯前端无后端也能"改完还在"；默认值与本地值一致时自动清除存储 |
+| 管理后台 | `SiteContext`（key `tianhao:site:v1`）保存整站内容；`AdminPanel` 11 个分区，列表支持增删/上移下移；导出/导入 JSON；`sanitize` 逐字段回退默认值 | 静态站没有后端，用"内容 JSON + localStorage"实现可编辑；默认值不落库，导出文件可换设备恢复 |
+| 内容与视图分离 | 组件统一通过 `useSite()` 读数据，`SectionHead` 组件统一渲染栏目标题 | 新增/修改文案不用改组件代码 |
 | 训练源码展示 | `import("./training/x.py?raw")` 动态导入，Vite 拆成独立 chunk；按行渲染带行号 | 源码约 1,100 行，不能进首屏包；点哪个加载哪个 |
 | 登录页 | `useAuth` + Web Crypto：账号 `tianhao`，口令以 PBKDF2-SHA256（150,000 次迭代、16 字节盐）哈希内置在构建产物里，源码无明文；登录状态放 sessionStorage，勾选「记住登录」写 7 天过期时间戳；5 次失败锁 30 秒 | 静态站没有后端，用浏览器端校验实现"进门验证"；同时如实说明它不是服务端鉴权 |
 | 改口令 | `changePassword` 校验当前口令 → 新盐 + 新哈希写入 localStorage（覆盖默认凭据） | 让账号归本人所有；换设备仍可用默认口令登录 |

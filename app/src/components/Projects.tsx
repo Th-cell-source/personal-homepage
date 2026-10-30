@@ -1,19 +1,17 @@
-import { projects } from "../data/profile";
+import { useSite } from "../context/SiteContext";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
 export function Projects() {
+  const { site } = useSite();
+
   return (
     <section className="section" id="projects">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">03</span>
-          <h2 className="section__title">项目作品</h2>
-          <span className="section__line" />
-          <span className="section__note">selected works</span>
-        </Reveal>
+        <SectionHead id="projects" />
 
         <div className="projects">
-          {projects.map((project, index) => (
+          {site.projects.map((project, index) => (
             <Reveal
               className={`proj ${project.muted ? "proj--muted" : ""}`.trim()}
               as="article"
@@ -32,9 +30,11 @@ export function Projects() {
                   </span>
                 ))}
               </div>
-              <a className="proj__link" href={project.link} target="_blank" rel="noopener noreferrer">
-                {project.linkText}
-              </a>
+              {project.link ? (
+                <a className="proj__link" href={project.link} target="_blank" rel="noopener noreferrer">
+                  {project.linkText}
+                </a>
+              ) : null}
             </Reveal>
           ))}
         </div>

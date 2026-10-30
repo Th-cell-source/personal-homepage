@@ -30,7 +30,7 @@ personal-homepage/
 │       ├── App.tsx           # 页面组装
 │       ├── components/       # Nav / Hero / About / Skills / Projects / Journey / Contact / Footer / Backdrop / Reveal
 │       ├── hooks/            # useParticles、useScrollProgress、useSectionSpy
-│       ├── data/             # profile.ts：个人信息、技能、项目、时间线
+│       ├── data/             # site.ts（全站默认内容）、deliverables.ts、profile.ts、localPaths.ts、training.ts
 │       └── styles/           # global.css：设计令牌与全部样式
 ├── scripts/copy-dist.mjs     # 构建产物拷到仓库根目录
 ├── index.html + assets/      # 已构建的发布产物（Pages 直接托管）
@@ -70,7 +70,7 @@ git add -A && git commit -m "..." && git push
 | 实训历程 | 10-20 ~ 10-28 七天时间线 |
 | 训练文件 | 训练链路、三阶段指标与损失曲线、8 个脚本源码在线查看 |
 | 本地文件 | 10 条本机路径，一键下载启动脚本或复制路径 |
-| 成果入口 | 五样交付物集中入口：个人网站、智语 Chat（本机）、电商插件、秒搭、Bolt，带状态徽标 |
+| 成果入口 | 五样交付物集中入口：个人网站、智语 Chat（本机）、电商插件、秒搭、Bolt，带状态徽标与本机路径（可复制） |
 | 联系 | GitHub / 主页 / 学校 / 专业 |
 
 ## 实现要点
@@ -79,7 +79,7 @@ git add -A && git commit -m "..." && git push
 - **自定义 Hook**：`useParticles`（Canvas 粒子，DPR ≤ 2、节点 ≤ 72、页面隐藏暂停、`prefers-reduced-motion` 降级）、`useScrollProgress`（顶部进度条）、`useSectionSpy`（导航高亮）。
 - **进场动画**：`Reveal` 组件用 `IntersectionObserver` 加 `.in`，`--d` 变量做错峰。
 - **可访问性**：语义标签、`aria-expanded`、`:focus-visible` 焦点环、`<noscript>` 兜底。
-- **个人信息编辑**：`ProfileContext` + `localStorage`，弹窗修改 8 个字段，保存即生效、刷新不丢，可一键恢复默认。
+- **管理后台**：登录后可改站点全部内容（11 个分区：资料、首屏、数据条、关于、技能、项目、实训、成果、本地路径、栏目标题、联系），支持增删条目、导出/导入 JSON、恢复默认。
 - **登录验证**：进入站点先登录（账号 `tianhao`，口令见交付说明），PBKDF2-SHA256 哈希内置、支持记住登录 7 天、5 次错误锁定、可改口令与退出。
 - **训练文件**：`?raw` 动态导入 8 个训练脚本（按需加载、带行号查看），指标与损失曲线来自 `training/artifacts`。
 

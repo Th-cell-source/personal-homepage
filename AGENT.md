@@ -52,7 +52,8 @@ app/src/
 
 ## 五、数据与持久化
 
-- 个人信息唯一来源是 `ProfileContext`，组件只能 `useProfile()` 读取，禁止再直接 import `profile` 常量。
+- 站点内容唯一来源是 `SiteContext`（默认值在 `data/site.ts`），组件只能 `useSite()` 读取。
+- 新增一块可见内容时：先加类型与默认值 → 再在 `AdminPanel` 加对应 Tab → 最后在组件里渲染，三步缺一不可。
 - 持久化只允许 `localStorage`（key 带前缀 `tianhao:`），读写必须 try/catch；与默认值相同则不写库。
 - 大文件（训练源码等）用 `?raw` 动态导入，不要静态 import，避免撑大首屏包。
 

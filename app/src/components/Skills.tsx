@@ -1,19 +1,17 @@
-import { skills } from "../data/profile";
+import { useSite } from "../context/SiteContext";
 import { Reveal } from "./Reveal";
+import { SectionHead } from "./SectionHead";
 
 export function Skills() {
+  const { site } = useSite();
+
   return (
     <section className="section" id="skills">
       <div className="wrap">
-        <Reveal className="section__head" as="header">
-          <span className="section__idx">02</span>
-          <h2 className="section__title">技能栈</h2>
-          <span className="section__line" />
-          <span className="section__note">tech stack</span>
-        </Reveal>
+        <SectionHead id="skills" />
 
         <div className="skills">
-          {skills.map((skill, index) => (
+          {site.skills.map((skill, index) => (
             <Reveal className="skill" as="article" key={skill.title} delay={index * 80}>
               <div className="skill__head">
                 <span className="skill__icon">{skill.icon}</span>
