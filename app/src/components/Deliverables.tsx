@@ -64,11 +64,14 @@ const items: Deliverable[] = [
   {
     index: "05",
     title: "Bolt（国外零代码平台）",
-    kind: "无代码应用",
-    status: "pending",
-    statusText: "环境报错待重试",
-    desc: "用 Bolt 生成的「AI 翻译助手」。当前 WebContainer 启动超时，按排查步骤处理后再生成。",
-    actions: [{ label: "排查步骤", href: "#local", note: "无痕窗口 / 清缓存 / 单文件模板" }],
+    kind: "无代码应用 · AI 翻译助手",
+    status: "live",
+    statusText: "已发布",
+    desc: "用 Bolt 生成并发布的「AI 翻译助手」：中英双向翻译、自动识别语向、复制译文、字数统计，界面深色科技风。",
+    actions: [
+      { label: "打开应用", href: "https://chinese-english-tran-pjxs.bolt.host" },
+      { label: "生成过程", href: "https://bolt.new", note: "Bolt 工作区" },
+    ],
   },
 ];
 
